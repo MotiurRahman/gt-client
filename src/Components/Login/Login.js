@@ -1,14 +1,18 @@
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Form, Button } from "react-bootstrap";
-import app from "../../Firebase/Firebase";
-
-const auth = getAuth(app);
+import { useLocation, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../Context/UserContext";
 
 const Login = () => {
-  const provider = new GoogleAuthProvider();
+  const [message, setMessage] = useState("");
+  const [show, setShow] = useState(true);
+  // const navigate = useNavigate();
+  // const location = useLocation();
+  // const from = location.state?.from?.pathname || "/";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { user, loader, setLoader, signIn, googleLogin } =
+    useContext(AuthContext);
 
   //Google Login
 
@@ -20,28 +24,15 @@ const Login = () => {
     console.log(email, password);
   };
 
-  const googleLogin = () => {
-    signInWithPopup(auth, provider)
+  const googleLoginbtn = () => {
+    googleLogin()
       .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
-        console.log(user);
-        // IdP data available using getAdditionalUserInfo(result)
-        // ...
+        console.log(result.user);
+        setMessage("");
+        //setAuthToken(result.user);
+        // navigate(from, { replace: true });
       })
-      .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
-      });
+      .catch((error) => setMessage(error.message));
   };
 
   return (
@@ -75,7 +66,7 @@ const Login = () => {
       </Form>
       <Button
         variant="success"
-        onClick={googleLogin}
+        onClick={googleLoginbtn}
         className="mt-4"
         type="button"
       >

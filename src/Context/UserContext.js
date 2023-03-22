@@ -66,7 +66,7 @@ const UserContext = ({ children }) => {
     logout,
   };
   return (
-    <UserContext.Provider value={authValue}>{children}</UserContext.Provider>
+    <AuthContext.Provider value={authValue}>{children}</AuthContext.Provider>
   );
 };
 
